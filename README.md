@@ -2,9 +2,9 @@
 
 Visual HomesNI-styled prototype for a new-homes / developments admin.
 
-## View the site
+## Live site
 
-Open [index.html](./index.html) locally, or via GitHub Pages once enabled.
+https://jacobhomesni.github.io/developments-crm/
 
 ## What’s here
 
