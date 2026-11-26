@@ -1,10 +1,10 @@
-# Developments CRM
+# New Developments Addons
 
 Visual HomesNI-styled prototype for a new-homes / developments admin.
 
 ## Live site
 
-https://jacobhomesni.github.io/new-developments-crm/edit-development.htmledit-development.html
+https://jacobhomesni.github.io/new-developments-addons/edit-development.html
 
 ## What’s here
 
