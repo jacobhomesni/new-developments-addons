@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <title>HomesNI Admin — Edit Development (enhanced)</title>
+  <link rel="icon" href="https://homesni.com/images/favicons/favicon-32x32.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <style>
+    :root {
+      /* HomesNI Admin palette */
+      --brand: #0064e0;
+      --brand-hover: #0052b8;
+      --brand-dark: #021452;
+      --ink: #000000;
+      --muted: #555555;
+      --bg: #f5f6f8;
+      --bg-soft: #f0f1f4;
+      --white: #ffffff;
+      --line: #e5e7eb;
+      --ok: #16a34a;
+      --danger: #dc2626;
+      --warn: #ca8a04;
+      --sidebar: 240px;
+      --topbar: 64px;
+      --radius: 6px;
+      --shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+      --new: #0064e0;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: Lato, "Helvetica Neue", Arial, sans-serif;
+      font-size: 15px;
+      line-height: 1.45;
+      color: var(--ink);
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    a { color: var(--brand); text-decoration: none; }
+    button, input, select, textarea { font: inherit; }
+    img { max-width: 100%; display: block; }
+
+    /* Prototype banner */
+    .proto-banner {
+      flex-shrink: 0;
+      background: var(--brand-dark);
+      color: #fff;
+      padding: 8px 16px;
+      font-size: 13px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .proto-banner strong { color: #93c5fd; }
+    .proto-banner .legend { display: flex; gap: 10px; flex-wrap: wrap; }
+    .tag-new {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--brand);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: .04em;
+      padding: 2px 6px;
+      border-radius: 999px;
+      vertical-align: middle;
+      margin-left: 2px;
+    }
+    .is-new-block {
+      outline: 2px dashed rgba(0, 100, 224, 0.35);
+      outline-offset: 2px;
+      border-radius: var(--radius);
+      background: rgba(0, 100, 224, 0.03);
+    }
+
+    /* Topbar — white HomesNI Admin chrome */
+    .topbar {
+      flex-shrink: 0;
+      background: var(--white);
+      border-bottom: 1px solid var(--line);
+      height: var(--topbar);
+      z-index: 50;
+    }
+    .topbar .container {
+      height: 100%;
+      max-width: 100%;
+      padding: 0 16px 0 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+    .hamburger {
+      border: none;
+      background: transparent;
+      font-size: 18px;
+      color: var(--ink);
+      padding: 8px;
+      cursor: pointer;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .header-logo {
+      display: flex;
+      align-items: center;
+    }
+    .header-logo a {
+      display: flex;
+      align-items: center;
+      line-height: 0;
+    }
+    .header-logo img {
+      height: 28px;
+      width: auto;
+      display: block;
+    }
+    .header-dropdown { margin-left: auto; }
+    .welcome-text {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 500;
+    }
+    .welcome-text i { color: var(--muted); margin-left: 4px; }
+    .header-dropdown .icon img {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1px solid var(--line);
+    }
+
+    main {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      align-items: stretch;
+    }
+
+    /* Sidenav — fills remaining viewport; footer always fully visible */
+    .sidenav {
+      width: var(--sidebar);
+      background: var(--white);
+      color: var(--ink);
+      border-right: 1px solid var(--line);
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      padding: 12px 0 0;
+      height: 100%;
+      min-height: 0;
+    }
+    .sidenav-menu {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      overflow-y: auto;
+      flex: 1;
+      min-height: 0;
+    }
+    .sidenav a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 18px;
+      color: var(--ink);
+      font-weight: 700;
+      font-size: 14px;
+      transition: background .15s ease, color .15s ease;
+    }
+    .sidenav a i { color: var(--muted); width: 1.1em; text-align: center; }
+    .sidenav a:hover {
+      background: var(--bg-soft);
+      color: var(--brand);
+    }
+    .sidenav a:hover i { color: var(--brand); }
+    .sidenav a.active {
+      background: rgba(0, 100, 224, 0.08);
+      color: var(--brand);
+      border-left: 3px solid var(--brand);
+      padding-left: 15px;
+    }
+    .sidenav a.active i { color: var(--brand); }
+    .sidenav-footer {
+      flex-shrink: 0;
+      margin-top: auto;
+      border-top: 1px solid var(--line);
+      background: var(--white);
+      padding: 8px 0 12px;
+    }
+    .sidenav-footer .logout a {
+      color: var(--ink);
+    }
+    .sidenav .collapse { padding: 4px 18px 0; }
+    .toggle-sidenav-btn {
+      border: 1px solid var(--line);
+      background: var(--white);
+      color: var(--ink);
+      padding: 8px 10px;
+      border-radius: var(--radius);
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .toggle-sidenav-btn:hover {
+      background: var(--bg-soft);
+      border-color: var(--brand);
+      color: var(--brand);
+    }
+
+    .main-container {
+      flex: 1;
+      min-width: 0;
+      min-height: 0;
+      background: var(--bg);
+      overflow-y: auto;
+    }
+    .content {
+      padding: 18px 20px 100px;
+      width: 100%;
+      max-width: none;
+    }
+
+    .main-header h1 {
+      margin: 0;
+      font-size: 1.6rem;
+      font-weight: 900;
+      letter-spacing: -.02em;
+    }
+    .u-flex { display: flex; }
+    .u-flex-space-between { justify-content: space-between; }
+    .u-flex-align-start { align-items: flex-start; }
+    .u-gap-10 { gap: 10px; }
+    .u-margin-top-5 { margin-top: 5px; }
+    .u-margin-top-10 { margin-top: 10px; }
+    .u-margin-top-20 { margin-top: 20px; }
+    .u-color-primary { color: var(--brand); }
+    .u-hidden-mobile { display: block; }
+    .u-hidden-desktop { display: none; }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      background: var(--bg-soft);
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+    .badge-large { padding: 6px 14px; font-size: 13px; }
+    .badge-danger { background: #fde8e6; color: var(--danger); border-color: transparent; }
+    .badge-success { background: #e6f6ed; color: var(--ok); border-color: transparent; }
+    /* HomesNI admin Online / Offline status pill */
+    .badge[data-status="Online"] {
+      background: #e6f6ed;
+      color: var(--ok);
+      border-color: transparent;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      font-weight: 900;
+    }
+    .badge[data-status="Offline"] {
+      background: #fde8e6;
+      color: var(--danger);
+      border-color: transparent;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      font-weight: 900;
+    }
+
+    .main-breadcrumbs {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .main-breadcrumbs li:not(:last-child)::after {
+      content: "/";
+      margin-left: 6px;
+      color: var(--line);
+    }
+
+    .grid-1 { margin-bottom: 14px; width: 100%; }
+
+    /* Tabs */
+    .tabs { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); width: 100%; }
+    .tab-header {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0;
+      border-bottom: 1px solid var(--line);
+      overflow-x: auto;
+      background: var(--white);
+    }
+    .tab-btn {
+      border: none;
+      background: transparent;
+      padding: 12px 14px;
+      font-weight: 700;
+      color: var(--muted);
+      border-bottom: 3px solid transparent;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+    .tab-btn i { margin-right: 6px; }
+    .tab-btn:hover { color: var(--brand); background: var(--bg-soft); }
+    .tab-btn.active {
+      color: var(--brand);
+      border-bottom-color: var(--brand);
+      background: rgba(0, 100, 224, 0.06);
+    }
+    .tab-btn .tag-new { margin-left: 4px; }
+    .mobile-tab-select { padding: 12px; }
+    .prop-edit-info {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    .content-box {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px 18px 18px;
+      width: 100%;
+    }
+    .content-box header h3 {
+      margin: 0;
+      font-size: 1.05rem;
+      font-weight: 900;
+    }
+    .content-box header h5 {
+      margin: 0;
+      font-size: .9rem;
+      font-weight: 900;
+    }
+    .content-divider {
+      height: 1px;
+      background: var(--line);
+      margin: 10px 0 14px;
+    }
+    .form-container { display: flex; flex-wrap: wrap; gap: 14px 16px; }
+    .form-group { width: 100%; }
+    .form-group-half { width: calc(50% - 8px); }
+    .form-group label {
+      display: block;
+      font-weight: 700;
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+    .astrick { color: var(--danger); }
+    .form-control {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 10px 12px;
+      background: #fff;
+      color: var(--ink);
+    }
+    textarea.form-control { min-height: 100px; resize: vertical; }
+    .form-control:focus {
+      outline: 2px solid rgba(0,100,224,.25);
+      border-color: var(--brand);
+    }
+    .help-text {
+      margin: 6px 0 0;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .input-group { display: flex; gap: 8px; }
+    .input-group .form-control { flex: 1; }
+    .area-list { margin: 8px 0 0; padding-left: 18px; color: var(--ink); font-weight: 700; }
+
+    .check-row {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--bg-soft);
+    }
+    .check-row input { margin-top: 3px; }
+    .check-row strong { display: block; }
+    .check-row span { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; }
+
+    .m-btn {
+      border: none;
+      border-radius: var(--radius);
+      padding: 10px 14px;
+      font-weight: 700;
+      cursor: pointer;
+      background: var(--bg-soft);
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+    .m-btn:hover { border-color: var(--brand); color: var(--brand); }
+    .m-btn-secondary { background: var(--brand); color: #fff; border-color: var(--brand); }
+    .m-btn-secondary:hover { background: var(--brand-hover); border-color: var(--brand-hover); color: #fff; }
+    .m-btn-secondary:disabled { opacity: .55; cursor: not-allowed; }
+    .m-btn-success { background: var(--ok); color: #fff; border-color: var(--ok); }
+    .m-btn-danger { background: var(--danger); color: #fff; border-color: var(--danger); }
+    .m-btn-xs { padding: 6px 10px; font-size: 12px; }
+    .m-btn--primary { background: var(--brand); color: #fff; border-color: var(--brand); }
+    .m-btn--primary:hover { background: var(--brand-hover); border-color: var(--brand-hover); color: #fff; }
+
+    .editor-fake {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      min-height: 160px;
+      padding: 12px;
+      background: #fff;
+    }
+    .editor-toolbar {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--line);
+    }
+    .editor-toolbar span {
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      border-radius: 4px;
+      background: var(--bg-soft);
+      font-size: 12px;
+      font-weight: 900;
+      color: var(--ink);
+    }
+
+    .map-box {
+      height: 280px;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background:
+        radial-gradient(circle at 48% 52%, rgba(0,100,224,.4) 0 9px, transparent 10px),
+        linear-gradient(0deg, #d7e4c7 0 40%, #e8f0d8 40% 58%, #cfe0f5 58%);
+      margin-top: 12px;
+    }
+
+    .upload-zone {
+      border: 2px dashed var(--line);
+      border-radius: var(--radius);
+      padding: 28px;
+      text-align: center;
+      color: var(--muted);
+      background: var(--bg-soft);
+    }
+    .upload-zone i { font-size: 22px; display: block; margin-bottom: 8px; color: var(--brand); }
+    .media-row {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .media-tile {
+      aspect-ratio: 4/3;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(160deg, rgba(0,100,224,.35), rgba(2,20,82,.65)),
+        #9bb6e0;
+      color: #fff;
+      display: grid;
+      align-content: end;
+      padding: 8px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .media-tile.add {
+      background: var(--bg-soft);
+      color: var(--muted);
+      border-style: dashed;
+      place-items: center;
+      align-content: center;
+    }
+
+    table.data {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    table.data th, table.data td {
+      text-align: left;
+      padding: 10px 8px;
+      border-bottom: 1px solid var(--line);
+      white-space: nowrap;
+    }
+    table.data th {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      color: var(--muted);
+    }
+    .status-pill {
+      display: inline-flex;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      background: #e6f6ed;
+      color: var(--ok);
+    }
+    .status-pill.warn { background: #fff4d6; color: var(--warn); }
+    .status-pill.muted { background: var(--bg-soft); color: var(--muted); }
+
+    .hours-grid { display: grid; gap: 8px; width: 100%; }
+    .hours-row {
+      display: grid;
+      grid-template-columns: 110px 1fr 1fr;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .submitbar {
+      position: fixed;
+      left: var(--sidebar);
+      right: 0;
+      bottom: 0;
+      background: var(--white);
+      border-top: 1px solid var(--line);
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      z-index: 40;
+      box-shadow: 0 -4px 16px rgba(2,20,82,.06);
+    }
+    .submitbar .left { color: var(--muted); font-size: 13px; }
+    .submitbar .right { display: flex; gap: 8px; }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; width: 100%; }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(0, 100, 224, 0.1);
+      color: var(--ink);
+      font-weight: 700;
+      font-size: 12px;
+    }
+
+    @media (max-width: 980px) {
+      .sidenav { display: none; }
+      .form-group-half { width: 100%; }
+      .media-row { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .u-hidden-mobile { display: none; }
+      .u-hidden-desktop { display: block; }
+      .submitbar { left: 0; }
+      .hours-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="proto-banner">
+    <div>
+      HomesNI admin tabs kept · added <strong>Microsite</strong> tab.
+      Blue outline /<span class="tag-new">NEW</span> = proposed additions.
+    </div>
+  </div>
+
+  <header class="topbar">
+    <div class="container">
+      <div class="topbar-left">
+        <button type="button" class="hamburger" aria-label="Menu"><i class="fa-solid fa-bars"></i></button>
+        <div class="header-logo">
+          <a href="#"><img src="https://homesni.com/images/logo-landscape-dark.svg" alt="HomesNI" /></a>
+        </div>
+      </div>
+      <div class="header-dropdown">
+        <span class="welcome-text">
+          agent@homesni.com <i class="fa-solid fa-angle-down"></i>
+          <span class="icon"><img src="https://homesni.com/images/favicons/apple-touch-icon.png" alt="" /></span>
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <nav class="sidenav">
+      <ul class="sidenav-menu">
+        <li><a href="#"><i class="fa-solid fa-chart-line"></i><span>Dashboard</span></a></li>
+        <li><a href="#"><i class="fa-solid fa-house"></i><span>Property List</span></a></li>
+        <li><a href="#"><i class="fa-solid fa-plus"></i><span>Add Property</span></a></li>
+        <li><a href="#" class="active"><i class="fa-solid fa-trowel-bricks"></i><span>New Developments</span></a></li>
+        <li><a href="#"><i class="fa-solid fa-envelope"></i><span>Customer Enquires</span></a></li>
+        <li><a href="#"><i class="fa-solid fa-envelope"></i><span>Valuation Requests</span></a></li>
+      </ul>
+      <div class="sidenav-footer">
+        <div class="logout">
+          <a href="#"><i class="fa-solid fa-right-from-bracket fa-rotate-180"></i><span>Logout</span></a>
+        </div>
+        <div class="collapse">
+          <button type="button" class="toggle-sidenav-btn"><i class="fa-solid fa-arrow-left"></i> Collapse Menu</button>
+        </div>
+      </div>
+    </nav>
+
+    <div class="main-container">
+      <div class="content">
+        <div class="grid-1">
+          <header class="main-header">
+            <div class="u-flex u-flex-space-between u-gap-10 u-flex-align-start">
+              <h1>Oakwood Grange</h1>
+              <div class="badge badge-large badge-success" data-status="Online"><span>Online</span></div>
+            </div>
+            <ul class="main-breadcrumbs u-margin-top-5">
+              <li><a href="#">Dashboard</a></li>
+              <li><a href="#">New Developments</a></li>
+              <li>Development Details</li>
+            </ul>
+          </header>
+        </div>
+
+        <div class="grid-1">
+          <div class="tabs" id="tabWrapper">
+            <div class="form-group mobile-tab-select u-hidden-desktop">
+              <select id="tabDropdown" class="form-control">
+                <option value="tab1">Development Details</option>
+                <option value="tab2">Description</option>
+                <option value="tab3">Location / Directions</option>
+                <option value="tab4">Uploads</option>
+                <option value="tab5">Properties</option>
+                <option value="tab6">Microsite</option>
+              </select>
+            </div>
+            <div class="tab-header u-hidden-mobile">
+              <button type="button" class="tab-btn active" data-tab="tab1"><i class="fa-solid fa-circle-info"></i> Development Details</button>
+              <button type="button" class="tab-btn" data-tab="tab2"><i class="fa-solid fa-pen"></i> Description</button>
+              <button type="button" class="tab-btn" data-tab="tab3"><i class="fa-solid fa-location-dot"></i> Location / Directions</button>
+              <button type="button" class="tab-btn" data-tab="tab4"><i class="fa-solid fa-photo-film"></i> Uploads</button>
+              <button type="button" class="tab-btn" data-tab="tab5"><i class="fa-solid fa-house"></i> Properties</button>
+              <button type="button" class="tab-btn" data-tab="tab6"><i class="fa-solid fa-globe"></i> Microsite <span class="tag-new">NEW</span></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-1">
+          <ul class="prop-edit-info">
+            <li class="badge"><span>Date Added:</span>&nbsp;25/9/2026 1:32 PM</li>
+            <li class="badge"><span>Last Updated:</span>&nbsp;26/11/2026 10:40 AM</li>
+          </ul>
+        </div>
+
+        <form id="editdev" autocomplete="off" onsubmit="return false;">
+          <!-- TAB 1: Details (existing + missing fields) -->
+          <div class="tab-content active" id="tab1">
+            <div class="grid-1">
+              <div class="content-box">
+                <header><h3>Essentials</h3></header>
+                <div class="content-divider"></div>
+                <div class="form-container">
+                  <div class="form-group form-group-half">
+                    <label for="DevelopmentName">Development Name <span class="astrick">*</span></label>
+                    <input class="form-control" id="DevelopmentName" name="DevelopmentName" value="Oakwood Grange" />
+                  </div>
+                  <div class="form-group form-group-half">
+                    <label for="JointAgentID">Joint Agent</label>
+                    <select class="form-control" id="JointAgentID" name="JointAgentID">
+                      <option value="0">-- Please Select --</option>
+                      <option value="214" selected>Homepage Estate Agents</option>
+                      <option value="85">McLernon Estate Agents</option>
+                      <option value="54">Colliers New Homes</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group form-group-half is-new-block">
+                    <label for="Availability">Availability <span class="tag-new">NEW</span></label>
+                    <select class="form-control" id="Availability" name="Availability">
+                      <option>Coming soon</option>
+                      <option selected>On release</option>
+                      <option>Selling</option>
+                      <option>Sold out</option>
+                    </select>
+                  </div>
+                  <div class="form-group form-group-half is-new-block">
+                    <label for="Tenure">Tenure <span class="tag-new">NEW</span></label>
+                    <select class="form-control" id="Tenure" name="Tenure">
+                      <option value="">-- Please Select --</option>
+                      <option selected>Freehold</option>
+                      <option>Leasehold</option>
+                      <option>Share of freehold</option>
+                    </select>
+                  </div>
+                  <div class="form-group is-new-block">
+                    <label for="Tagline">Tagline <span class="tag-new">NEW</span></label>
+                    <input class="form-control" id="Tagline" name="Tagline" value="New phase out now" maxlength="100" />
+                    <p class="help-text">Short line under the address on the public page.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid-1">
+              <div class="content-box">
+                <header><h3>Address</h3></header>
+                <div class="content-divider"></div>
+                <div class="form-container">
+                  <div class="form-group form-group-half">
+                    <label for="Address">Address Line 1 <span class="astrick">*</span></label>
+                    <input class="form-control" id="Address" name="Address" value="Ballymacash Road" />
+                  </div>
+                  <div class="form-group form-group-half">
+                    <label for="address2">Address Line 2</label>
+                    <input class="form-control" id="address2" name="address2" value="" />
+                  </div>
+                  <div class="form-group form-group-half is-new-block">
+                    <label for="Town">Town / City <span class="tag-new">NEW</span></label>
+                    <input class="form-control" id="Town" name="Town" value="Lisburn" />
+                  </div>
+                  <div class="form-group form-group-half is-new-block">
+                    <label for="County">County <span class="tag-new">NEW</span></label>
+                    <input class="form-control" id="County" name="County" value="Antrim" />
+                  </div>
+                  <div class="content-divider" style="width:100%"></div>
+                  <header style="width:100%"><h5>Area Lookup</h5></header>
+                  <div class="form-group form-group-half">
+                    <div class="input-group">
+                      <input class="form-control" placeholder="Start typing an area..." value="Lisburn" />
+                      <button type="button" class="m-btn m-btn-secondary">Update Area</button>
+                    </div>
+                    <div class="text u-color-primary u-margin-top-10" style="font-weight:700;margin-top:10px;">Development is added to the below area.</div>
+                    <ul class="area-list"><li>Lisburn</li></ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid-1">
+              <div class="content-box">
+                <header><h3>Details</h3></header>
+                <div class="content-divider"></div>
+                <div class="form-container">
+                  <div class="form-group form-group-half">
+                    <label for="minbeds">Min Bedrooms</label>
+                    <select class="form-control" id="minbeds" name="minbeds">
+                      <option value="0">-- Please Select --</option>
+                      <option value="3" selected>3</option>
+                      <option value="4">4</option>
+                    </select>
+                  </div>
+                  <div class="form-group form-group-half">
+                    <label for="maxbeds">Max Bedrooms</label>
+                    <select class="form-control" id="maxbeds" name="maxbeds">
+                      <option value="0">-- Please Select --</option>
+                      <option value="4" selected>4</option>
+                      <option value="5">5</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="phase">Phase label</label>
+                    <input class="form-control" id="phase" name="phase" value="Phase 2" />
+                    <p class="help-text">Simple label for the listing. Manage full phase list under Properties.</p>
+                  </div>
+                  <div class="form-group">
+                    <label for="Synopsis">Synopsis / Summary</label>
+                    <textarea class="form-control" id="Synopsis" name="Synopsis" rows="4" placeholder="Brief overview of the development">A thoughtfully planned residential development on the edge of Lisburn.</textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid-1">
+              <div class="content-box">
+                <header><h3>Show House Times</h3></header>
+                <div class="content-divider"></div>
+                <div class="form-container">
+                  <div class="form-group">
+                    <label for="ShowHouseTimes">Show House Times</label>
+                    <textarea class="form-control" id="ShowHouseTimes" name="ShowHouseTimes" rows="3" placeholder="Details of Show House Times">Mon–Fri 12:00–17:00 · Sat 11:00–16:00 · Sun closed</textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid-1">
+              <div class="content-box">
+                <header><h3>Pricing</h3></header>
+                <div class="content-divider"></div>
+                <div class="form-container">
+                  <div class="form-group">
+                    <label>Price Range</label>
+                    <input class="form-control" name="PriceRange" value="From £244,950" />
+                  </div>
+                  <div class="form-group form-group-half">
+                    <label>Min Price</label>
+                    <input class="form-control" type="number" name="minprice" value="244950" />
+                  </div>
+                  <div class="form-group form-group-half">
+                    <label>Max Price</label>
+                    <input class="form-control" type="number" name="maxprice" value="329950" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid-1">
+              <div class="content-box is-new-block">
+                <header><h3>Publishing &amp; warranty <span class="tag-new">NEW</span></h3></header>
+                <div class="content-divider"></div>
+                <div class="form-container">
+                  <div class="form-group form-group-half">
+                    <label>Publish status</label>
+                    <select class="form-control">
+                      <option>Draft</option>
+                      <option selected>Live</option>
+                      <option>Hidden</option>
+                    </select>
+                  </div>
+                  <div class="form-group form-group-half">
+                    <label>Associated selling agents</label>
+                    <div class="chips">
+                      <span class="chip">Homepage Estate Agents ×</span>
+                      <span class="chip">McLernon Estate Agents ×</span>
+                    </div>
+                  </div>
+                  <div class="check-row">
+                    <input type="checkbox" id="ShowPublic" checked />
+                    <div>
+                      <strong>Show on HomesNI listing</strong>
+                      <span>Appears in new-homes search when Live.</span>
+                    </div>
+                  </div>
+                  <div class="check-row">
+                    <input type="checkbox" id="Nhbc" />
+                    <div>
+                      <strong>Show warranty / NHBC badge</strong>
+                      <span>Display warranty banner on overview and property-type pages.</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid-1">
+              <div class="content-box is-new-block">
+                <header><h3>Private Notes <span class="tag-new">NEW</span></h3></header>
+                <div class="content-divider"></div>
+                <div class="form-group">
+                  <label>Internal notes (never shown to the public)</label>
+                  <textarea class="form-control" rows="5">Joint agency — confirm brochure stock before weekend open day. Phase 3 drawings due mid-month.</textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 2: Description -->
+          <div class="tab-content" id="tab2">
+            <div class="grid-1">
+              <div class="content-box">
+                <header><h3>Description</h3></header>
+                <div class="content-divider"></div>
+                <div class="form-container">
+                  <div class="form-group is-new-block">
+                    <label>Short description <span class="tag-new">NEW</span></label>
+                    <textarea class="form-control" rows="3">Forever starts here. View house types, site layout and specification.</textarea>
+                  </div>
+                  <div class="form-group is-new-block">
+                    <label>Bullet / highlight list <span class="tag-new">NEW</span></label>
+                    <textarea class="form-control" rows="4">• Fibre broadband to every home
+• High-efficiency heating
+• Landscaped open spaces
+• Close to schools and Lisburn centre</textarea>
+                  </div>
+                  <div class="form-group">
+                    <label>Long description</label>
+                    <div class="editor-fake">
+                      <div class="editor-toolbar">
+                        <span>B</span><span><i>I</i></span><span>U</span><span>•</span><span>1.</span>
+                      </div>
+                      <div>
+                        <p><strong>SPECIFICATION</strong> — standard to all homes</p>
+                        <p>Mains pressurised water · Tarmac driveway · Argon-filled glazing · High-efficiency gas heating · Fibre broadband · Fully fitted utility</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 3: Location -->
+          <div class="tab-content" id="tab3">
+            <div class="grid-1">
+              <div class="content-box">
+                <header><h3>Location &amp; Mappings</h3></header>
+                <div class="content-divider"></div>
+                <div class="form-container">
+                  <div class="form-group">
+                    <div class="text" style="color:var(--muted)">Enter a postcode / address, search, then drag the pin. Save to store coordinates.</div>
+                    <div class="input-group u-margin-top-10">
+                      <input class="form-control" value="Ballymacash Road, Lisburn" />
+                      <button type="button" class="m-btn m-btn-secondary">Search</button>
+                    </div>
+                    <div class="map-box"></div>
+                    <div class="u-margin-top-10" style="display:flex;gap:8px;flex-wrap:wrap;">
+                      <span class="badge badge-success badge-large"><span>Latitude:</span>&nbsp;54.516200</span>
+                      <span class="badge badge-success badge-large"><span>Longitude:</span>&nbsp;-6.043100</span>
+                    </div>
+                  </div>
+                  <div class="form-group is-new-block">
+                    <label>Pin accuracy <span class="tag-new">NEW</span></label>
+                    <select class="form-control">
+                      <option selected>Exact / rooftop</option>
+                      <option>Street or postcode</option>
+                      <option>General area</option>
+                      <option>Approximate</option>
+                    </select>
+                  </div>
+                  <div class="form-group is-new-block">
+                    <label>Directions <span class="tag-new">NEW</span></label>
+                    <textarea class="form-control" rows="3">From Lisburn centre, follow signs for Ballymacash. Show home on the left after the roundabout.</textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 4: Uploads (images + videos + files + site maps) -->
+          <div class="tab-content" id="tab4">
+            <div class="grid-1">
+              <div class="content-box">
+                <header class="u-flex u-flex-space-between" style="display:flex;justify-content:space-between;align-items:center;">
+                  <h3>Development Images <span>(3)</span></h3>
+                  <button type="button" class="m-btn m-btn-xs m-btn-danger">Delete All</button>
+                </header>
+                <div class="content-divider"></div>
+                <div class="upload-zone">
+                  <i class="fa-solid fa-upload"></i>
+                  Drop property images here or click to upload
+                </div>
+                <div class="media-row">
+                  <div class="media-tile">Cover</div>
+                  <div class="media-tile">Exterior</div>
+                  <div class="media-tile">Kitchen</div>
+                  <div class="media-tile add">+ Upload more</div>
+                </div>
+                <p class="help-text is-new-block" style="padding:8px;">Primary / cover image + drag reorder <span class="tag-new">NEW detail</span></p>
+              </div>
+            </div>
+
+            <div class="grid-1">
+              <div class="content-box is-new-block">
+                <header><h3>Videos <span class="tag-new">NEW</span></h3></header>
+                <div class="content-divider"></div>
+                <div class="form-container">
+                  <div class="form-group">
+                    <label>Embed URL or upload</label>
+                    <div class="input-group">
+                      <input class="form-control" placeholder="https://youtube.com/watch?v=…" />
+                      <button type="button" class="m-btn m-btn-secondary">Add video</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="media-row">
+                  <div class="media-tile">Drone tour</div>
+                  <div class="media-tile add">+ Add video</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid-1">
+              <div class="content-box is-new-block">
+                <header><h3>Files <span class="tag-new">NEW</span></h3></header>
+                <div class="content-divider"></div>
+                <p class="help-text" style="margin-bottom:12px;">Brochures, PDFs, floor plans (max ~25MB).</p>
+                <div class="upload-zone"><i class="fa-solid fa-file-arrow-up"></i> Drop files here or click to upload</div>
+                <div class="u-margin-top-20">
+                  <table class="data">
+                    <thead><tr><th>Name</th><th>Type</th><th>Size</th><th></th></tr></thead>
+                    <tbody>
+                      <tr><td>Oakwood brochure</td><td>PDF</td><td>2.4 MB</td><td><a href="#">Replace</a></td></tr>
+                      <tr><td>Price list</td><td>PDF</td><td>180 KB</td><td><a href="#">Replace</a></td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid-1">
+              <div class="content-box is-new-block">
+                <header><h3>Site Maps <span class="tag-new">NEW</span></h3></header>
+                <div class="content-divider"></div>
+                <div class="upload-zone"><i class="fa-solid fa-map"></i> Upload site plan images</div>
+                <div class="media-row">
+                  <div class="media-tile">Phase 2 plan</div>
+                  <div class="media-tile add">+ Add site map</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 5: Properties (types, phases, linked listings) -->
+          <div class="tab-content" id="tab5">
+            <div class="grid-1">
+              <div class="content-box is-new-block">
+                <header><h3>Property Types <span class="tag-new">NEW</span></h3></header>
+                <div class="content-divider"></div>
+                <p class="help-text" style="margin-bottom:12px;">House styles. Units under each type hold asking price &amp; availability.</p>
+                <table class="data">
+                  <thead>
+                    <tr>
+                      <th>Type</th><th>Style</th><th>Beds</th><th>From</th><th>Available</th><th>Status</th><th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>The Agnes</td><td>Semi-detached</td><td>3</td><td>£244,950</td><td>2</td>
+                      <td><span class="status-pill">For sale</span></td><td><a href="#">Open</a></td>
+                    </tr>
+                    <tr>
+                      <td>The Beech</td><td>Detached</td><td>4</td><td>£329,950</td><td>1</td>
+                      <td><span class="status-pill">For sale</span></td><td><a href="#">Open</a></td>
+                    </tr>
+                    <tr>
+                      <td>The Cedar</td><td>Townhouse</td><td>3</td><td>POA</td><td>0</td>
+                      <td><span class="status-pill warn">Coming soon</span></td><td><a href="#">Open</a></td>
+                    </tr>
+                  </tbody>
+                </table>
+                <div class="u-margin-top-20">
+                  <h5 style="margin:0 0 8px;font-weight:900;">Units — The Agnes</h5>
+                  <table class="data">
+                    <thead><tr><th>Plot</th><th>Price</th><th>Status</th><th>Public</th></tr></thead>
+                    <tbody>
+                      <tr><td>14</td><td>£244,950</td><td><span class="status-pill">Available</span></td><td>Yes</td></tr>
+                      <tr><td>15</td><td>£249,950</td><td><span class="status-pill warn">Reserved</span></td><td>Yes</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+                <p class="u-margin-top-10"><button type="button" class="m-btn m-btn-secondary">Add Property Type</button></p>
+              </div>
+            </div>
+
+            <div class="grid-1">
+              <div class="content-box is-new-block">
+                <header><h3>Phases <span class="tag-new">NEW</span></h3></header>
+                <div class="content-divider"></div>
+                <table class="data">
+                  <thead><tr><th>Phase</th><th>Status</th><th>Order</th><th></th></tr></thead>
+                  <tbody>
+                    <tr><td>Phase 1</td><td><span class="status-pill muted">Sold out</span></td><td>1</td><td><a href="#">Edit</a></td></tr>
+                    <tr><td>Phase 2</td><td><span class="status-pill">On release</span></td><td>2</td><td><a href="#">Edit</a></td></tr>
+                  </tbody>
+                </table>
+                <p class="u-margin-top-10"><button type="button" class="m-btn m-btn-secondary">Add Phase</button></p>
+              </div>
+            </div>
+
+            <div class="grid-1">
+              <div class="content-box">
+                <header><h3>Linked Properties</h3></header>
+                <div class="content-divider"></div>
+                <p class="help-text" style="margin-bottom:12px;">Link existing HomesNI property listings to this development (current admin behaviour).</p>
+                <div class="form-container">
+                  <div class="form-group">
+                    <div class="input-group">
+                      <input class="form-control" placeholder="Start typing a property address..." />
+                      <button type="button" class="m-btn m-btn-secondary" disabled>Add Property</button>
+                    </div>
+                  </div>
+                </div>
+                <table class="data u-margin-top-10">
+                  <thead>
+                    <tr><th>PropertyID</th><th>Address</th><th>Asking Price</th><th>Status</th><th>Delete</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><td colspan="5" style="color:var(--muted);">No data available in table</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 6: Microsite (only crucial extra tab) -->
+          <div class="tab-content" id="tab6">
+            <div class="grid-1">
+              <div class="content-box is-new-block">
+                <header><h3>Microsite <span class="tag-new">NEW</span></h3></header>
+                <div class="content-divider"></div>
+                <div class="form-container">
+                  <div class="check-row">
+                    <input type="checkbox" checked />
+                    <div>
+                      <strong>Microsite enabled</strong>
+                      <span>Serve a bespoke landing page for this development.</span>
+                    </div>
+                  </div>
+                  <div class="check-row">
+                    <input type="checkbox" checked />
+                    <div>
+                      <strong>Microsite live</strong>
+                      <span>Bespoke URL is publicly reachable.</span>
+                    </div>
+                  </div>
+                  <div class="form-group form-group-half">
+                    <label>Public URL / slug</label>
+                    <input class="form-control" value="/developments/oakwood-grange" />
+                  </div>
+                  <div class="form-group form-group-half">
+                    <label>Content mode</label>
+                    <select class="form-control">
+                      <option selected>Custom microsite content</option>
+                      <option>Reuse standard listing</option>
+                    </select>
+                  </div>
+                  <div class="form-group form-group-half">
+                    <label>Brand colour</label>
+                    <input class="form-control" value="#0064e0" />
+                  </div>
+                  <div class="form-group form-group-half">
+                    <label>Cover image</label>
+                    <input class="form-control" value="oakwood-hero.jpg" />
+                  </div>
+                </div>
+                <div class="media-tile u-margin-top-20" style="aspect-ratio:21/9;width:100%;place-items:center;align-content:center;">
+                  Oakwood Grange microsite · Preview
+                </div>
+                <p class="u-margin-top-10" style="display:flex;gap:8px;">
+                  <button type="button" class="m-btn m-btn--primary">Preview</button>
+                  <button type="button" class="m-btn m-btn-secondary">Publish microsite</button>
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div id="submitbar" class="submitbar">
+            <div class="left"><strong>Last Updated:</strong>&nbsp;26/11/2026 10:40 AM</div>
+            <div class="right">
+              <button type="button" class="m-btn">Archive</button>
+              <button type="submit" class="m-btn m-btn-success" id="submitform">Save Changes</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      const buttons = [...document.querySelectorAll('.tab-btn')];
+      const panels = [...document.querySelectorAll('.tab-content')];
+      const dropdown = document.getElementById('tabDropdown');
+
+      function show(id) {
+        buttons.forEach((b) => b.classList.toggle('active', b.dataset.tab === id));
+        panels.forEach((p) => p.classList.toggle('active', p.id === id));
+        if (dropdown) dropdown.value = id;
+        history.replaceState(null, '', '#' + id);
+      }
+
+      buttons.forEach((b) => b.addEventListener('click', () => show(b.dataset.tab)));
+      if (dropdown) dropdown.addEventListener('change', () => show(dropdown.value));
+
+      document.getElementById('submitform').addEventListener('click', () => {
+        alert('Prototype only — Save would POST to edit-development2.asp');
+      });
+
+      const hash = (location.hash || '#tab1').slice(1);
+      if (document.getElementById(hash)) show(hash);
+    })();
+  </script>
+</body>
+</html>
