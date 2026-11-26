@@ -1,21 +1,21 @@
-# New Developments Addons
+ï»¿# New Developments Addons
 
 Visual HomesNI-styled prototype for a new-homes / developments admin.
 
 ## Live site
 
-https://jacobhomesni.github.io/new-developments-addons/edit-development.html
+https://jacobhomesni.github.io/new-developments-addons/
 
-## What’s here
+## Whatâ€™s here
 
-- `edit-development.html` — **HomesNI admin clone** of edit-development, plus proposed fields. Open with Live Server.
-- `field-map.md` — section-by-section field plan and data model
+- `index.html` â€” HomesNI admin edit-development prototype (open with Live Server)
+- `field-map.md` â€” section-by-section field plan and data model
 
 Sample development: **Oakwood Grange, Lisburn** (fictional).
 
 ### Tabs
 
-**Kept:** Development Details · Description · Location / Directions · Uploads · Properties  
+**Kept:** Development Details Â· Description Â· Location / Directions Â· Uploads Â· Properties  
 
 **Added:** Microsite  
 
