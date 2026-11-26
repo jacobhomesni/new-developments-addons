@@ -1,21 +1,21 @@
-ï»¿# Developments CRM
+# Developments CRM
 
 Visual HomesNI-styled prototype for a new-homes / developments admin.
 
 ## Live site
 
-https://jacobhomesni.github.io/developments-crm/edit-development.html
+https://jacobhomesni.github.io/new-developments-crm/edit-development.htmledit-development.html
 
-## Whatâ€™s here
+## What’s here
 
-- `edit-development.html` â€” **HomesNI admin clone** of edit-development, plus proposed fields. Open with Live Server.
-- `field-map.md` â€” section-by-section field plan and data model
+- `edit-development.html` — **HomesNI admin clone** of edit-development, plus proposed fields. Open with Live Server.
+- `field-map.md` — section-by-section field plan and data model
 
 Sample development: **Oakwood Grange, Lisburn** (fictional).
 
 ### Tabs
 
-**Kept:** Development Details Â· Description Â· Location / Directions Â· Uploads Â· Properties  
+**Kept:** Development Details · Description · Location / Directions · Uploads · Properties  
 
 **Added:** Microsite  
 
